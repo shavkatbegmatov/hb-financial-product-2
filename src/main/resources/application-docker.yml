@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: hb-financial-product
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/finance_product_2}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:f3300955#F123456}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          batch_size: 20
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+server:
+  port: 8080
+  compression:
+    enabled: true
+  http2:
+    enabled: true
+
+application:
+  jwt-secret: ${JWT_SECRET:I6kOVoLtd1QeoAAxNF+OW5ABGP3c+sMEcMqzSWD1pIxEGVeh07t+fNo6I3njcBGVRbVKo0It7m6v6LigQS+spQ==}
+  refresh-token-secret: ${REFRESH_TOKEN_SECRET:HCr567j2yMMhxiumV8DAfll3urlj95mbfRk33pPa1kfbqC5I4ChQeXh4v4RnUnVzFRc8012CH0dmGZMxF2dTTA==}
+  access-token-expiry: ${ACCESS_TOKEN_EXPIRY:3600000}
+  refresh-token-expiry: ${REFRESH_TOKEN_EXPIRY:604800000}
+  timezone: ${TIMEZONE:Asia/Tashkent}
+
+logging:
+  level:
+    uz.hayotbank: INFO
+    org.springframework.jdbc: WARN
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: /app/logs/application.log
+    max-size: 10MB
+    max-history: 7
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+    metrics:
+      enabled: true
+  health:
+    db:
+      enabled: true
+    disk-space:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true

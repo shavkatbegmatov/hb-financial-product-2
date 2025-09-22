@@ -1,0 +1,94 @@
+spring:
+  application:
+    name: hb-financial-product
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_product_2
+    username: postgres
+    password: f3300955#F123456
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    clean-disabled: false
+    validate-on-migrate: false
+
+
+server:
+  port: 8080
+
+
+application:
+  jwt-secret: ${JWT_SECRET:I6kOVoLtd1QeoAAxNF+OW5ABGP3c+sMEcMqzSWD1pIxEGVeh07t+fNo6I3njcBGVRbVKo0It7m6v6LigQS+spQ==}
+  refresh-token-secret: ${REFRESH_TOKEN_SECRET:HCr567j2yMMhxiumV8DAfll3urlj95mbfRk33pPa1kfbqC5I4ChQeXh4v4RnUnVzFRc8012CH0dmGZMxF2dTTA==}
+  access-token-expiry: ${ACCESS_TOKEN_EXPIRY:3600000} # 1 hour
+  refresh-token-expiry: ${REFRESH_TOKEN_EXPIRY:604800000} # 7 days
+  timezone: ${TIMEZONE:Asia/Tashkent}
+
+logging:
+  level:
+    uz.brb.auditqr: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.web: INFO
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+    jmx:
+      exposure:
+        exclude: "*"
+
+---
+# Docker profile configuration
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/finance_product_2
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:f3300955#F123456}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    clean-disabled: true
+    validate-on-migrate: true
+
+server:
+  port: 8080
+
+logging:
+  level:
+    uz.hayotbank: INFO
+    org.springframework.jdbc: WARN
+    org.springframework.web: INFO
+    org.flywaydb: INFO
